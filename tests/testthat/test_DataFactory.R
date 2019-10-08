@@ -55,9 +55,17 @@ test_that("DataFactory", {
   expect_true(verifyFunction('x_ui', function(x) is.integer(x) && x >= 0L))
   expect_true(verifyFunction('x_ui', Negate(is.na), 30))
 
+  expect_true(verifyFunction('x_ni', is.integer, 0))
+  expect_true(verifyFunction('x_ni', function(x) is.integer(x) && x <= 0L))
+  expect_true(verifyFunction('x_ni', Negate(is.na), 30))
+
   expect_true(verifyFunction('x_ur', is.double, 0))
   expect_true(verifyFunction('x_ur', function(x) is.double(x) && x >= 0.0))
   expect_true(verifyFunction('x_ur', Negate(is.na), 30))
+
+  expect_true(verifyFunction('x_nr', is.double, 0))
+  expect_true(verifyFunction('x_nr', function(x) is.double(x) && x <= 0.0))
+  expect_true(verifyFunction('x_nr', Negate(is.na), 30))
 
   expect_true(verifyFunction('x_l', is.list, 0))
   expect_true(verifyFunction('x_l', is.list))
@@ -82,7 +90,8 @@ test_that("DataFactory - coverage", {
   expect_true(startsWith(df$getDrawFunction('xxx'), 'No draw function matches'))
 
   expect_false(df$addSuffix('xyz', 'xyz', NA))
-  expect_true(df$addSuffix('xyz', 'xyz', function(o_) TRUE))
+  expect_false(df$addSuffix('xyz', 'xyz', function(o_) TRUE))
+  expect_false(df$addSuffix('xyz', 'xyz', function(n_i_1, replace_b_1 = TRUE) TRUE)) # no a recorded type
 
   expect_error(df$getType('xxx', FALSE))
   expect_true(startsWith(df$getType('xxx'), 'No suffix or type matches'))
@@ -91,5 +100,14 @@ test_that("DataFactory - coverage", {
 
   # to cover sublist generation
   expect_true(is.list(df$drawList(3, TRUE, FALSE, TRUE)))
+
+  expect_false(df$addSuffix('z', 'zorg', function(){}))
+
+  expect_false(df$addSuffix('f', 'function', function(){}))
+  expect_false(df$addSuffix('f', 'function', function(n_i_1, replace_b_1 = TRUE) {})) # wrong return type
+  expect_false(df$addSuffix('f', 'function', function(n_i, replace_b_1 = TRUE) { list(`*`, `+`, `-`)[[sample(1:3, 1)]]})) # wrong arg #1
+  expect_false(df$addSuffix('f', 'function', function(n_i_1, replace_b_1) { list(`*`, `+`, `-`)[[sample(1:3, 1)]]})) # wrong arg #2
+  expect_true(df$addSuffix('f', 'function',
+                           function(n_i_1, replace_b_1 = TRUE) { list(`*`, `+`, `-`)[[sample(1:3, 1)]]}))
 })
 

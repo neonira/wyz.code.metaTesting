@@ -53,7 +53,7 @@ test_that("generatedData", {
   expect_length(o[[3]]$data, 2)
   expect_length(o[[4]]$data, 3)
 
-  expect_length(o[[5]]$data, 0)
+  expect_length(o[[5]]$data, 1)
   expect_length(o[[6]]$data, 2)
   expect_length(o[[7]]$data, 3)
   expect_length(o[[8]]$data, 4)
@@ -63,7 +63,7 @@ test_that("generatedData", {
   expect_length(o[[11]]$data, 2)
   expect_length(o[[12]]$data, 3)
 
-  expect_length(o[[13]]$data, 0)
+  expect_length(o[[13]]$data, 1)
   expect_length(o[[14]]$data, 2)
   expect_length(o[[15]]$data, 3)
   expect_length(o[[16]]$data, 4)
@@ -73,4 +73,17 @@ test_that("generatedData", {
   expect_length(generateData(op_sum, list('removeNA_b_1' = 'b'), ec, erc$homo_vector[[2]],
                 dac$partial), 4)
 
+})
+
+
+hh <- generateData(op_sum, list(), ec, erc$hetero_list[[4]], dac$full)
+
+test_that("generatedData - coverage", {
+  expect_length(hh$data, 4)
+})
+
+hi <- generateData(op_sum, list(), ec, erc$hetero_list[[1]], dac$full)
+
+test_that("generatedData - coverage", {
+  expect_length(hi$data, 1)
 })

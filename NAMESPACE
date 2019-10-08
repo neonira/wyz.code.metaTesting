@@ -11,8 +11,8 @@ export(
   qualifyFunctionArguments,
   opwf,
   offensiveProgrammingWrapFunction,
-  buildArgumentsSubstitutionTable,
   DataFactory,
+  retrieveDataFactory,
   generateData,
   setGenerationContext,
   testFunction,
@@ -21,6 +21,7 @@ export(
   usesSemanticArgumentNames,
   buildSemanticArgumentName,
   exploreSignatures,
+  shareSameSignature,
   packageFunctionsInformation,
 
   # variables

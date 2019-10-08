@@ -28,7 +28,6 @@ packageFunctionsInformation <- function() {
 
   funs <- list(
     il('qualifyFunctionArguments'),
-    il('buildArgumentsSubstitutionTable'),
     il('buildSemanticArgumentName'),
     il('computeArgumentsSignature'),
     il('DataFactory'),

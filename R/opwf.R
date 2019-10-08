@@ -22,26 +22,18 @@ opwf <- function(fun_f_1,
   ff <- qfa$arguments
   names(ff) <- parameterNames_s
 
-  tt <- buildArgumentsSubstitutionTable(fun_f_1)
-  wp <- which(tt$requires_name_propagation == TRUE)
-  lwp <- length(wp)
   audit <- wyz.code.offensiveProgramming::isAuditable()
-  if (lwp > 0) {
 
-    subargs <- removeEllipsisName(parameterNames_s)
+  if (qfa$owns_ellipsis) {
+    substitution_names <- removeEllipsisName(parameterNames_s)
     sfa <- removeEllipsisName(qfa$argument_names)
-
-    z <- sapply(seq_len(lwp), function(k) {
-      lng <- tt$text[wp[k]]
-      if (audit) cat('>>> patching', strBracket(lng), 'with', strBracket(strJoin(sfa)),
-                     'to be replaced by', strBracket(strJoin(subargs)), '\n')
-      lng <- codeScanner(lng, sfa, subargs)
-      if (audit) cat('>>> result', lng, '\n')
-      lng
-    })
-    #print(z)
-    ff[wp] <- str2expression(z)
+    args <- qfa$arguments[-qfa$ellipsis_index]
+  } else {
+    substitution_names <- parameterNames_s
+    sfa <- qfa$argument_names
+    args <- qfa$arguments
   }
+  fg <- codePatcher(args, sfa, substitution_names)
 
   callParameters <- function() {
     sapply(seq_len(l), function(k) {
@@ -52,13 +44,16 @@ opwf <- function(fun_f_1,
   }
 
   f <- function() {}
-  formals(f) <- ff
+  formals(f) <- if (qfa$owns_ellipsis) append(fg, ff[getEllipsisName()], qfa$ellipsis_index - 1) else fg
   dsf <- ifelse(is.na(functionName_s_1), deparse(substitute(fun_f_1)), functionName_s_1)
-  e <- str2lang(paste0(dsf, '(', paste(callParameters(), collapse = ', '),')'))
+  bd <- paste0('`', dsf, '`', '(', paste(callParameters(), collapse = ', '), ')')
+  if (audit) cat('>>> patching  body with', bd, '\n')
+  e <- str2lang(bd)
+  if (audit) { cat('>>>result\n'); print(e) }
   body(f)  <- as.call(c(as.name('{'), e))
 
-  # some errors might remain in code translation - uneasy to detect them as it
-  # implies function execution with valued arguments.
+  # some errors might remain in code translation -
+  # uneasy to detect them as it implies function execution with valued arguments.
   f
 }
 

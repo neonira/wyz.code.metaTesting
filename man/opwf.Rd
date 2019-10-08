@@ -38,7 +38,7 @@ Refer to \code{\link{testFunction}}
 op_sum <- opwf(sum, c('...', 'removeNA_b_1'))
 
 # example with substituted argument in existing default valued arguments
-op_append <- opwf(append, c('originalValues_', 'valuesToInser_', 'afterIndex_ui_1'))
+op_append <- opwf(append, c('originalValues_', 'valuesToInsert_', 'afterIndex_ui_1'))
 }
 \keyword{ programming }
 \keyword{ utilities }

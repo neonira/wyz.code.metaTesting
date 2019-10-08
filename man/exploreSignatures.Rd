@@ -34,6 +34,9 @@ Moreover it provides argument signature analysis, which is not provided by \code
 
 Arguments restriction parameter \emph{\code{argumentsTypeRestrictions_l}} allows to restrict on demand, value types exploration. It is very useful and convenient to reduce the exploration tree, and to shorten execution time.
 
+By default, a total of 768 tests will run for a single function, when no
+\code{signaturesRestrictions_l} is set. This may requires some time to achieve.
+
 When working interactively, a good practice is to use \code{\link{computeArgumentsCombination}} prior to use function \code{\link{computeArgumentsCombination}}, as it will provide complexity information about the function you wish to test. The number of signature is a good metric of function call complexity. Know that each of them will be tested, and data generation has to be achieved for each parameter according to global or restricted scheme, depending on your \emph{\code{argumentsTypeRestrictions_l}} inputs.
 
 }

@@ -19,7 +19,7 @@ generateData <- function(function_f_1,
           'owns arguments that are not semantic names')
 
   qfa <- qualifyFunctionArguments(function_f_1)
-  df <- DataFactory()
+  df <- retrieveDataFactory()
 
   # argumentsTypeRestrictions_l checks
   #    1. names must be unique
@@ -42,18 +42,11 @@ generateData <- function(function_f_1,
     lapply(argumentsTypeRestrictions_l, enforceSemanticIdentifier)
   } else list()
 
-  ellipsis <- wyz.code.offensiveProgramming::getEllipsisName()
-
-  # compute argument names set to draw from
-  qn <- qfa$symbol_names
-  nm <- if (defaultArgumentsContext_l$use_all) {
-    union(qn, qfa$default_names)
-  } else {
-    ld <- length(qfa$default_names)
-    if (ld > 0 && defaultArgumentsContext_l$use) {
-      union(qn, sample(qfa$default_names, sample(seq_len(ld), 1),  FALSE))
-    } else qn
-  }
+  ellipsis <- getEllipsisName()
+  nm <- qfa$argument_names
+  if (ellipsisReplacementContext_l$number_replacements == 0)
+    nm <- setdiff(nm, ellipsis)
+  if (!defaultArgumentsContext_l$use) nm <- setdiff(nm, qfa$default_names)
 
   semell <- character(0)
   ellnames <- character(0)
@@ -81,8 +74,6 @@ generateData <- function(function_f_1,
         w <- which(nm == ellipsis)
         nm <- append(nm[-w], ellnames, w - 1)
       }
-    } else {
-      nm <- qfa$stripped_symbol_names
     }
   }
 
@@ -99,9 +90,19 @@ generateData <- function(function_f_1,
        if (lar > 0 && ellipsis %in% names(argumentsTypeRestrictions_l)) {
         enforceSemanticIdentifier(semell[ne])} else e
     } else {
-      cv <- rf
-      rc <- replacementContext_l
-      if (lar > 0 && e %in% names(argumentsTypeRestrictions_l)) {
+      fpn <- FunctionParameterName(e)
+      is_polymorphic <- fpn$isPolymorphic()
+      if (is_polymorphic) {
+        cv <- rf
+        rc <- replacementContext_l
+      } else {
+        is_list <- fpn$getTypeSuffix() == 'l'
+        cv <- if (is_list) as.list else as.vector
+        rc <- setGenerationContext(replacementContext_l$number_replacements,
+                                   FALSE, is_list, is_list)
+      }
+
+      if (is_polymorphic && lar > 0 && e %in% names(argumentsTypeRestrictions_l)) {
         sample(atr[[e]], 1)
       } else e
     }

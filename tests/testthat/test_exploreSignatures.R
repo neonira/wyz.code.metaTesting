@@ -12,6 +12,12 @@ cac_sum <- computeArgumentsCombination(op_sum)
 
 rv_sum_f <- exploreSignatures(op_sum, list(... = c('im', 'r', 'cm')), cac_sum$signatures[c(1, 5)])
 
+
+op_matrix <- opwf(matrix, c('data_', 'numberOfRows_ui_1', 'numberOfColumns_ui_1',
+                            'givenByRow_b_1', 'dimensionNames_l_2' ))
+cac_matrix <- computeArgumentsCombination(op_matrix)
+rv_matrix  <- exploreSignatures(op_matrix)
+
 test_that("exploreSignatures", {
   expect_type(rv_cos, 'list')
   expect_length(rv_cos, 3)
@@ -28,5 +34,4 @@ test_that("exploreSignatures", {
   expect_true(nrow(rv_sum$success$table) == nrow(rv_sum$success$code))
 
   expect_error(exploreSignatures(op_sum, list(... = c('im', 'r', 'cm')), list('alpha')))
-
 })
