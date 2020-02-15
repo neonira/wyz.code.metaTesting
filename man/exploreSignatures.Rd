@@ -19,7 +19,7 @@ exploreSignatures(fun_f_1,
   \item{argumentsTypeRestrictions_l}{
 a named \code{list}. Each name must match
   a function argument name. Each content must be a vector of strings, each of them
-  matching a \code{\link{DataFactory}} known suffix.
+  matching a \code{retrieveDataFactory()$getKnownSuffixes()} known suffix.
 }
   \item{signaturesRestrictions_l}{
 an unnamed \code{list} of single strings, each of them
@@ -80,6 +80,7 @@ Maintainer: \packageMaintainer{wyz.code.metaTesting}
 Refer to \code{\link{testFunction}} and to \code{\link{generateData}}.
 }
 \examples{
+\donttest{
 # typical use case
 op_sum <- opwf(sum, c('...', 'removeNA_b_1'))
 
@@ -96,7 +97,7 @@ print(rv_sum$success$synthesis)
 cac_sum <- computeArgumentsCombination(op_sum)
 rv_sum_f <- exploreSignatures(op_sum, list(... = c('im', 'r', 'cm')),
                               cac_sum$signatures[c(1, 5)])
-
+}
 }
 \keyword{ programation}
 \keyword{ utilities }
